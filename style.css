@@ -15,11 +15,17 @@ body {
 
 .main {
     background-color: #370031;
-    padding: 5rem;
+    padding: 4rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-content: center;
-    text-align: center;
     border-radius: 10px;
+}
+
+.threadDiv {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+#thread {
+    
 }

@@ -1,28 +1,23 @@
-const CHAT_SERVER = 'http://pi.local:7777'; 
-//Change CHAT_SERVER to 'http://localhost:7777' when using a computer
+import Thread from './class/thread.js';
+import {CHAT_SERVER} from './env.js';
 let mainDiv = document.querySelector('.main');
-let p = document.createElement('p');
-p.textContent = 'loaded';
-mainDiv.appendChild(p);
+
 fetching();
 
 // FIXME: find a place to see the console.log() for the error
 async function fetching() {
     try {
-        const data = await fetch(`${CHAT_SERVER}/api/threads/1`, {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+        const data = await fetch(`${CHAT_SERVER}/api/threads`);
     
-    const thread = await data.json();
-    p.textContent = JSON.stringify(thread);
-    mainDiv.appendChild(p);
+    const threads = await data.json();
+    threads.forEach(({thread_title, icon, user, id}) => new Thread(id, thread_title, icon, user));
+    // p.textContent = JSON.stringify(Thread.Threads);
+    mainDiv.appendChild(Thread.renderTitles());
     
     } catch(e) {
-        p.textContent = 'error';
+        let p = document.createElement('p');
+        mainDiv.appendChild(p);
+        p.textContent = e;
         mainDiv.appendChild(p);
     }
 }
