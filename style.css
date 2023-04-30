@@ -1,31 +1,74 @@
 * {
-    color: #EAF27C;
-    font-family: 'Cascadia Code', monospace;
+	color: #eaf27c;
+	font-family: 'Cascadia Code', monospace;
 }
 /* 
     * TODO: find a way to put the main class in the center of the screen 
 */
 
 body {
-    background-color: #0B0033;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	background-color: #0b0033;
+	display: flex;
+	justify-content: center;
 }
 
 .main {
-    background-color: #370031;
-    padding: 4rem;
-    display: flex;
-    flex-direction: column;
-    border-radius: 10px;
+	background-color: #370031;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 4rem;
+	border-radius: 10px;
 }
 
 .threadDiv {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+	padding-top: 1rem;
+	padding-bottom: 1rem;
 }
 
 #thread {
-    
+}
+
+.posts,
+input,
+button {
+	background-color: #834848;
+	padding: 10px;
+	border-radius: 10px;
+	border: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+.footer {
+	text-align: center;
+	padding: 10px;
+}
+
+h4 {
+	text-decoration: underline;
+}
+
+#username {
+	font-size: 10px;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.postText {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.postsFoot {
+	padding: 10px;
+	display: flex;
+	justify-content: space-between;
 }

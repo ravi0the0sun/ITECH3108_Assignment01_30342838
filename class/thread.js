@@ -12,7 +12,7 @@ export default class Thread {
 		this.constructor.Threads.push(this);
 	}
 
-	static renderTitles() {
+	static renderTitles(username) {
 		const div = document.createElement('div');
 		div.className = 'threads';
 		const anchorArray = Thread.Threads.map(thread => {
@@ -22,9 +22,12 @@ export default class Thread {
 
 			const anchor = document.createElement('a');
 			anchor.text = `${thread.thread_title} ${thread.icon}`;
-			anchor.href = '#';
 			anchor.className = `thread_text`;
-			anchor.addEventListener('click', () => renderPost(thread._id), false);
+			anchor.addEventListener(
+				'click',
+				() => renderPost(thread._id, username),
+				false
+			);
 
 			anchorDiv.appendChild(anchor);
 
@@ -37,9 +40,23 @@ export default class Thread {
 	}
 }
 
-async function renderPost(id) {
+async function renderPost(id, username) {
 	const postsDivs = document.querySelectorAll('.posts');
 	const threadDiv = document.querySelector(`#thread_${id}`);
+
+	const postsFoot = document.createElement('div');
+	postsFoot.className = 'postsFoot';
+
+	const textInput = document.createElement('input');
+	textInput.setAttribute('type', 'text');
+	textInput.setAttribute('placeholder', 'Post');
+	textInput.addEventListener('input', () => console.log(textInput.value));
+
+	const button = document.createElement('button');
+	button.textContent = 'Send ?';
+	button.addEventListener('click', () => console.log('post'));
+
+	postsFoot.append(textInput, button);
 
 	const postDiv = document.createElement('div');
 	postDiv.className = 'posts';
@@ -52,10 +69,11 @@ async function renderPost(id) {
 		const res = await fetch(`${CHAT_SERVER}/api/threads/${id}`);
 		const { posts } = await res.json();
 		const postList = posts.map(({ text, user }) => new Post(user, text));
-		const postElement = postList.map(postOjb => postOjb.toDOM());
+		const postElement = postList.map(postOjb => postOjb.toDOM(username));
+
 		postElement.forEach(post => postDiv.appendChild(post));
 
-		threadDiv.appendChild(postDiv);
+		threadDiv.append(postDiv, postsFoot);
 	} catch (error) {
 		console.log(error);
 	}

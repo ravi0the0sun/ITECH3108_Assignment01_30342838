@@ -4,9 +4,17 @@ export default class Post {
 		this.text = text;
 	}
 
-	toDOM() {
+	toDOM(username) {
 		const postDiv = document.createElement('div');
 		postDiv.className = 'post';
+
+		const div = document.createElement('div');
+		div.className = 'postText';
+
+		const a = document.createElement('a');
+		a.textContent = '🗑';
+		a.className = 'delete';
+		a.addEventListener('click', () => deletePost(), false);
 
 		const postText = document.createElement('p');
 		postText.className = 'postText';
@@ -15,11 +23,18 @@ export default class Post {
 		const postUser = document.createElement('p');
 		postUser.className = 'postUser';
 		postUser.textContent = `- @${this.user}`;
+		if (!(username === this.user)) {
+			div.append(postText);
+		} else {
+			div.append(postText, a);
+		}
 
-		const lineBreak = document.createElement('br');
-
-		postDiv.append(postText, postUser);
-
+		postDiv.append(div, postUser);
 		return postDiv;
 	}
 }
+
+async function deletePost() {
+	console.log('should have read the API');
+}
+
