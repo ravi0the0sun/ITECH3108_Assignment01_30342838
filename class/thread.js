@@ -207,6 +207,7 @@ export async function fetchPost(id) {
 		const { posts } = await res.json();
 		return posts;
 	} catch (e) {
+		console.log('Error: Thread No longer exist');
 		generalErrorHandler();
 	}
 }

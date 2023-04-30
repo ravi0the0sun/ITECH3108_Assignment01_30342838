@@ -21,7 +21,7 @@ if (!userStore) {
 }
 
 // Updating DOM every 10 seconds
-window.setInterval(() => renderLogic(userStore), 10000);
+window.setInterval(() => renderLogic(userStore), 5000);
 
 function renderLogic(user) {
 	const threadBody = document.querySelector('.threadBody');
@@ -72,7 +72,7 @@ async function renderNewData(posts, user) {
 	try {
 		await renderThreads(user);
 		//updating posts nodes
-		await renderPosts(posts);
+		await renderPosts(posts, user);
 	} catch (e) {
 		console.log(e);
 		generalErrorHandler();
@@ -112,11 +112,18 @@ async function renderThreads(user) {
 	}
 }
 
-async function renderPosts(posts) {
+async function renderPosts(posts, username) {
 	try {
 		const parentId = posts.parentNode.id.split('_')[1];
 
 		const postsData = await fetchPost(parentId);
+		if (!postsData) {
+			const threadBody = document.querySelector('.threadBody');
+			const backBtn = document.querySelector('#backBtn');
+			threadBody.children[1].remove();
+			threadBody.insertBefore(renderProfileThreads(username), backBtn);
+			return;
+		}
 		const postObjs = postsData.map(post => new Post(post.user, post.text));
 
 		posts.childNodes[0].remove();
@@ -142,7 +149,7 @@ async function renderProfileNewData(user, posts) {
 			threadBody.insertBefore(renderProfileThreads(user), backBtn);
 			// console.log(renderProfileThreads(user));
 		} else {
-			renderPosts(posts);
+			renderPosts(posts, user);
 
 			const threads = document.querySelector('.threads');
 			await fetchThreadData();
