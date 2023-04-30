@@ -1,6 +1,7 @@
 import Thread from '../class/thread.js';
+import { backHandler } from './renderNewThread.js';
 
-export async function renderProfile(user) {
+export function renderProfile(user) {
 	let mainBody = document.querySelector('.mainBody');
 	mainBody.remove();
 
@@ -15,30 +16,29 @@ export async function renderProfile(user) {
 	const h4 = document.createElement('h4');
 	h4.textContent = 'Threads From You';
 
-	const threads = document.createElement('div');
-	threads.className = 'threads';
-
-	const userThreads = Thread.Threads.filter(
-		thread => thread.user === user.username
-	);
-
 	mainBody.append(user.toDOM());
 	threadBody.append(h4);
 
-	console.log(user, userThreads.length);
+	const backBtn = document.createElement('button');
+	backBtn.setAttribute('id', 'backBtn');
+	backBtn.textContent = '⬅️ Back';
+	backBtn.addEventListener('click', () => backHandler());
 
+	threadBody.append(renderProfileThreads(user.username), backBtn);
+	mainBody.append(threadBody);
+	main.append(mainBody);
+}
+
+export function renderProfileThreads(username) {
+	const userThreads = Thread.Threads.filter(thread => thread.user === username);
 	if (!userThreads.length) {
 		const p = document.createElement('p');
 		p.textContent = 'There are no threads from you!!!';
-		threadBody.append(p);
-		mainBody.append(threadBody);
-		main.append(mainBody);
-		return;
+		return p;
 	}
-	userThreads.forEach(thread =>
-		threads.appendChild(thread.toDOM(user.username))
-	);
-	threadBody.append(threads);
-	mainBody.append(threadBody);
-	main.append(mainBody);
+
+	const threads = document.createElement('div');
+	threads.className = 'threads';
+	userThreads.forEach(thread => threads.appendChild(thread.toDOM(username)));
+	return threads;
 }

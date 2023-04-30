@@ -32,7 +32,7 @@ export async function renderHome(data) {
 	}
 }
 
-async function fetchThread() {
+export async function fetchThread() {
 	try {
 		const data = await fetch(`${CHAT_SERVER}/api/threads`);
 

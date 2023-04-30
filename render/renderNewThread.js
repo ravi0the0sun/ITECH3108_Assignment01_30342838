@@ -1,4 +1,5 @@
 import { CHAT_SERVER } from '../env.js';
+import { generalErrorHandler } from '../handler/errorHandler.js';
 import { renderHome } from './renderHome.js';
 
 export function renderNewThread(user) {
@@ -34,19 +35,36 @@ export function renderNewThread(user) {
 	threadIcon.setAttribute('id', 'threadIcon');
 	threadIcon.setAttribute('maxlength', '1');
 	threadIcon.setAttribute('placeholder', 'Icon');
-	threadIcon.addEventListener('input', () => console.log(threadIcon.value));
-
-	const threadTitle = document.createElement('input');
-	threadTitle.setAttribute('type', 'text');
-	threadTitle.setAttribute('id', 'threadTitle');
-	threadTitle.setAttribute('placeholder', 'Thread');
-	threadTitle.addEventListener('input', () => console.log(threadTitle.value));
 
 	const threadPost = document.createElement('input');
 	threadPost.setAttribute('type', 'text');
 	threadPost.setAttribute('id', 'threadPost');
 	threadPost.setAttribute('placeholder', 'Post');
-	threadPost.addEventListener('input', () => console.log(threadPost.value));
+
+	const threadTitle = document.createElement('input');
+	threadTitle.setAttribute('type', 'text');
+	threadTitle.setAttribute('id', 'threadTitle');
+	threadTitle.setAttribute('placeholder', 'Thread');
+
+	// Adding draft data saved in localStorage
+	const data = JSON.parse(localStorage.getItem('newThread'));
+	if (data) {
+		threadIcon.value = data.icon;
+		threadTitle.value = data.title;
+		threadPost.value = data.text;
+	}
+
+	threadIcon.addEventListener('input', () =>
+		saveDraft(threadIcon.value, threadTitle.value, threadPost.value)
+	);
+
+	threadTitle.addEventListener('input', () =>
+		saveDraft(threadIcon.value, threadTitle.value, threadPost.value)
+	);
+
+	threadPost.addEventListener('input', () =>
+		saveDraft(threadIcon.value, threadTitle.value, threadPost.value)
+	);
 
 	const postThreadBtn = document.createElement('button');
 	postThreadBtn.textContent = 'Upload';
@@ -68,10 +86,8 @@ export function renderNewThread(user) {
 
 async function postThread(username, threadTitle, icon, post) {
 	if (!(username && threadTitle && icon && post)) {
-		return console.log('empty string');
+		return;
 	}
-
-	console.log(username, threadTitle, icon, post);
 
 	try {
 		const res = await fetch(`${CHAT_SERVER}/api/threads`, {
@@ -87,7 +103,7 @@ async function postThread(username, threadTitle, icon, post) {
 				text: post,
 			}),
 		});
-		console.log(await res.json());
+		const data = await res.json();
 
 		const mainBody = document.querySelector('.mainBody');
 		mainBody.remove();
@@ -95,17 +111,13 @@ async function postThread(username, threadTitle, icon, post) {
 		main.append(
 			await renderHome(JSON.parse(localStorage.getItem('userStore')))
 		);
+		localStorage.removeItem('newThread');
 	} catch (e) {
-		const main = document.querySelector('.main');
-		const mainBody = document.querySelector('.mainBody');
-		mainBody.remove();
-		const error = document.createElement('p');
-		error.textContent = `Server Error: Cannot connect to the server \n Please check later`;
-		main.append(error);
+		generalErrorHandler();
 	}
 }
 
-async function backHandler() {
+export async function backHandler() {
 	const mainBody = document.querySelector('.mainBody');
 	const main = document.querySelector('.main');
 
@@ -115,8 +127,13 @@ async function backHandler() {
 			await renderHome(JSON.parse(localStorage.getItem('userStore')))
 		);
 	} catch (e) {
-		const error = document.createElement('p');
-		error.textContent = `Server Error: Cannot connect to the server \n Please check later`;
-		main.append(error);
+		generalErrorHandler();
 	}
+}
+
+function saveDraft(icon, title, text) {
+	localStorage.setItem(
+		'newThread',
+		JSON.stringify({ icon: icon, title: title, text: text })
+	);
 }

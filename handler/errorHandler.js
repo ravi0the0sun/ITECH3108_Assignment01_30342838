@@ -24,4 +24,16 @@ export function loginErrorHandler(e) {
 	console.log(e);
 }
 
-function generalErrorHandler() {}
+export function generalErrorHandler() {
+	const main = document.querySelector('.main');
+	const children = main.children;
+	if (children.length) {
+		for (let c = 0; c <= children.length; c++) {
+			children[0].remove();
+		}
+	}
+	const error = document.createElement('p');
+	error.setAttribute('id', 'error');
+	error.textContent = `Server Error: Cannot connect to the server \n Please check later`;
+	main.append(error);
+}
