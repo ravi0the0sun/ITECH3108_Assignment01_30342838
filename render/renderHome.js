@@ -27,7 +27,8 @@ export async function renderHome(data) {
 		// p.textContent = JSON.stringify(Thread.Threads);
 		return div;
 	} catch (e) {
-		console.log(e);
+		console.log('error from renderHome', e.message);
+		throw new Error(e.message);
 	}
 }
 
@@ -37,6 +38,7 @@ async function fetchThread() {
 
 		return await data.json();
 	} catch (e) {
-		console.log(e);
+		console.log('error from fetchThread', e.message);
+		throw new Error(e.message);
 	}
 }

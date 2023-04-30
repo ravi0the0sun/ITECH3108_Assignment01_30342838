@@ -52,7 +52,7 @@ h4 {
 }
 
 #username {
-	font-size: 10px;
+	font-size: 15px;
 }
 
 .header {
@@ -81,4 +81,11 @@ h4 {
 .newThreadDiv {
 	display: flex;
 	padding: 10px;
+}
+
+.signOutDiv {
+	display: flex;
+	justify-content: right;
+	font-size: 15px;
+	padding-bottom: 10px;
 }

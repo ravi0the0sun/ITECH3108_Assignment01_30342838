@@ -13,39 +13,41 @@ export default class Thread {
 		this.constructor.Threads.push(this);
 	}
 
+	toDOM(username) {
+		const anchorDiv = document.createElement('div');
+		anchorDiv.className = 'threadDiv';
+		anchorDiv.setAttribute('id', `thread_${this._id}`);
+
+		const anchorDelete = document.createElement('a');
+		anchorDelete.textContent = '🗑';
+		anchorDelete.className = 'delete';
+		anchorDelete.addEventListener(
+			'click',
+			() => deletePost(username, this._id),
+			false
+		);
+
+		const threadTitle = document.createElement('a');
+		threadTitle.text = `${this.thread_title} {${this.icon}}`;
+		threadTitle.className = `thread_text`;
+		threadTitle.addEventListener(
+			'click',
+			() => renderPost(this._id, username),
+			false
+		);
+
+		anchorDiv.append(
+			threadTitle,
+			!(this.user === username) ? '' : anchorDelete
+		);
+
+		return anchorDiv;
+	}
+
 	static renderTitles(username) {
 		const div = document.createElement('div');
 		div.className = 'threads';
-		const anchorArray = Thread.Threads.map(thread => {
-			const anchorDiv = document.createElement('div');
-			anchorDiv.className = 'threadDiv';
-			anchorDiv.setAttribute('id', `thread_${thread._id}`);
-
-			const anchorDelete = document.createElement('a');
-			anchorDelete.textContent = '🗑';
-			anchorDelete.className = 'delete';
-			anchorDelete.addEventListener(
-				'click',
-				() => deletePost(username, thread._id),
-				false
-			);
-
-			const threadTitle = document.createElement('a');
-			threadTitle.text = `${thread.thread_title} {${thread.icon}}`;
-			threadTitle.className = `thread_text`;
-			threadTitle.addEventListener(
-				'click',
-				() => renderPost(thread._id, username),
-				false
-			);
-
-			anchorDiv.append(
-				threadTitle,
-				!(thread.user === username) ? '' : anchorDelete
-			);
-
-			return anchorDiv;
-		});
+		const anchorArray = Thread.Threads.map(thread => thread.toDOM(username));
 		anchorArray.forEach(anchorThread => {
 			div.appendChild(anchorThread);
 		});

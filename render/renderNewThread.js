@@ -27,7 +27,7 @@ export function renderNewThread(user) {
 	const backBtn = document.createElement('button');
 	backBtn.setAttribute('id', 'backBtn');
 	backBtn.textContent = '⬅️ Back';
-	backBtn.addEventListener('click', () => console.log('back'));
+	backBtn.addEventListener('click', () => backHandler());
 
 	const threadIcon = document.createElement('input');
 	threadIcon.setAttribute('type', 'text');
@@ -72,12 +72,7 @@ async function postThread(username, threadTitle, icon, post) {
 	}
 
 	console.log(username, threadTitle, icon, post);
-	const data = {
-		user: username,
-		thread_title: threadTitle,
-		icon: icon,
-		text: post,
-	};
+
 	try {
 		const res = await fetch(`${CHAT_SERVER}/api/threads`, {
 			method: 'POST',
@@ -85,18 +80,43 @@ async function postThread(username, threadTitle, icon, post) {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(data),
+			body: JSON.stringify({
+				user: username,
+				thread_title: threadTitle,
+				icon: icon,
+				text: post,
+			}),
 		});
 		console.log(await res.json());
 
 		const mainBody = document.querySelector('.mainBody');
 		mainBody.remove();
-
 		const main = document.querySelector('.main');
 		main.append(
 			await renderHome(JSON.parse(localStorage.getItem('userStore')))
 		);
 	} catch (e) {
-		console.log(e);
+		const main = document.querySelector('.main');
+		const mainBody = document.querySelector('.mainBody');
+		mainBody.remove();
+		const error = document.createElement('p');
+		error.textContent = `Server Error: Cannot connect to the server \n Please check later`;
+		main.append(error);
+	}
+}
+
+async function backHandler() {
+	const mainBody = document.querySelector('.mainBody');
+	const main = document.querySelector('.main');
+
+	mainBody.remove();
+	try {
+		main.append(
+			await renderHome(JSON.parse(localStorage.getItem('userStore')))
+		);
+	} catch (e) {
+		const error = document.createElement('p');
+		error.textContent = `Server Error: Cannot connect to the server \n Please check later`;
+		main.append(error);
 	}
 }

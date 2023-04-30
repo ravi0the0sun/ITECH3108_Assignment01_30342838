@@ -1,5 +1,7 @@
 import { CHAT_SERVER } from '../env.js';
 import { loginErrorHandler } from './errorHandler.js';
+import { renderHome } from '../render/renderHome.js';
+import { renderSignOut } from '../render/renderSignOut.js';
 
 export async function loginHandler(data) {
 	try {
@@ -21,7 +23,7 @@ export async function loginHandler(data) {
 
 		const mainDiv = document.querySelector('.main');
 
-		mainDiv.appendChild(await renderHome(user));
+		mainDiv.append(renderSignOut(), await renderHome(user));
 	} catch (e) {
 		loginErrorHandler(e);
 	}
