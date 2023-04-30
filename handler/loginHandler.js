@@ -1,13 +1,12 @@
 import { CHAT_SERVER } from '../env.js';
 import { loginErrorHandler } from './errorHandler.js';
-import { renderHome } from '../render/renderHome.js';
 
-export async function loginHandler(value) {
+export async function loginHandler(data) {
 	try {
-		if (!value) {
+		if (!data) {
 			throw new Error('EmptyValue');
 		}
-		const res = await fetch(`${CHAT_SERVER}/api/users/${value}`);
+		const res = await fetch(`${CHAT_SERVER}/api/users/${data}`);
 		const user = await res.json();
 
 		if (user?.error) {

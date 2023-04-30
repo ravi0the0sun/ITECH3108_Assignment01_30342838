@@ -13,7 +13,7 @@ export default class Post {
 
 		const a = document.createElement('a');
 		a.textContent = '🗑';
-		a.className = 'delete';
+		a.className = 'deletePost';
 		a.addEventListener('click', () => deletePost(), false);
 
 		const postText = document.createElement('p');
@@ -37,4 +37,3 @@ export default class Post {
 async function deletePost() {
 	console.log('should have read the API');
 }
-

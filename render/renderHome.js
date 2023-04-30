@@ -4,6 +4,7 @@ import User from '../class/user.js';
 
 export async function renderHome(data) {
 	try {
+		Thread.Threads = [];
 		const threads = await fetchThread();
 		threads.forEach(
 			({ thread_title, icon, user, id }) =>
@@ -12,10 +13,17 @@ export async function renderHome(data) {
 
 		const user = new User(data.username, data.name);
 		const div = document.createElement('div');
+		div.className = 'mainBody';
+
+		const div2 = document.createElement('div');
+		div2.className = 'threadBody';
+
 		const h4 = document.createElement('h4');
 		h4.textContent = 'Threads';
 
-		div.append(user.toDOM(), h4, Thread.renderTitles(data.username));
+		div2.append(h4, Thread.renderTitles(data.username));
+
+		div.append(user.toDOM(), div2);
 		// p.textContent = JSON.stringify(Thread.Threads);
 		return div;
 	} catch (e) {

@@ -1,5 +1,6 @@
 import Post from './post.js';
 import { CHAT_SERVER } from '../env.js';
+import { renderHome } from '../render/renderHome.js';
 
 export default class Thread {
 	static Threads = [];
@@ -20,28 +21,44 @@ export default class Thread {
 			anchorDiv.className = 'threadDiv';
 			anchorDiv.setAttribute('id', `thread_${thread._id}`);
 
-			const anchor = document.createElement('a');
-			anchor.text = `${thread.thread_title} ${thread.icon}`;
-			anchor.className = `thread_text`;
-			anchor.addEventListener(
+			const anchorDelete = document.createElement('a');
+			anchorDelete.textContent = '🗑';
+			anchorDelete.className = 'delete';
+			anchorDelete.addEventListener(
+				'click',
+				() => deletePost(username, thread._id),
+				false
+			);
+
+			const threadTitle = document.createElement('a');
+			threadTitle.text = `${thread.thread_title} {${thread.icon}}`;
+			threadTitle.className = `thread_text`;
+			threadTitle.addEventListener(
 				'click',
 				() => renderPost(thread._id, username),
 				false
 			);
 
-			anchorDiv.appendChild(anchor);
+			anchorDiv.append(
+				threadTitle,
+				!(thread.user === username) ? '' : anchorDelete
+			);
 
 			return anchorDiv;
 		});
-		anchorArray.forEach(anchor => {
-			div.appendChild(anchor);
+		anchorArray.forEach(anchorThread => {
+			div.appendChild(anchorThread);
 		});
 		return div;
 	}
 }
 
-async function renderPost(id, username) {
+export async function renderPost(id, username) {
 	const postsDivs = document.querySelectorAll('.posts');
+	if (postsDivs) {
+		postsDivs.forEach(postsDiv => postsDiv.remove());
+	}
+
 	const threadDiv = document.querySelector(`#thread_${id}`);
 
 	const postsFoot = document.createElement('div');
@@ -60,9 +77,9 @@ async function renderPost(id, username) {
 
 	const postDiv = document.createElement('div');
 	postDiv.className = 'posts';
-	if (postsDivs) {
-		postsDivs.forEach(postsDiv => postsDiv.remove());
-	}
+
+	const postCollection = document.createElement('div');
+	postCollection.className = 'postCollection';
 
 	try {
 		//TODO: needs refactoring
@@ -71,10 +88,36 @@ async function renderPost(id, username) {
 		const postList = posts.map(({ text, user }) => new Post(user, text));
 		const postElement = postList.map(postOjb => postOjb.toDOM(username));
 
-		postElement.forEach(post => postDiv.appendChild(post));
-
-		threadDiv.append(postDiv, postsFoot);
+		postElement.forEach(post => postCollection.appendChild(post));
+		postDiv.append(postCollection, postsFoot);
+		threadDiv.append(postDiv);
 	} catch (error) {
 		console.log(error);
+	}
+}
+
+export async function deletePost(username, id) {
+	try {
+		const res = fetch(`${CHAT_SERVER}/api/threads/${id}`, {
+			method: 'DELETE',
+			mode: 'cors',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ user: username }),
+		});
+
+		if (!res) {
+			throw new Error('404');
+		}
+		const mainBody = document.querySelector('.mainBody');
+		mainBody.remove();
+
+		const main = document.querySelector('.main');
+		main.append(
+			await renderHome(JSON.parse(localStorage.getItem('userStore')))
+		);
+	} catch (e) {
+		console.log(e);
 	}
 }

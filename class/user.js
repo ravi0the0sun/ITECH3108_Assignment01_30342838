@@ -1,3 +1,5 @@
+import { renderNewThread } from '../render/renderNewThread.js';
+
 export default class User {
 	constructor(username, name) {
 		this.username = username;
@@ -14,7 +16,8 @@ export default class User {
 
 		const button = document.createElement('button');
 		button.textContent = 'New Thread';
-		button.addEventListener('click', () => console.log('hello'));
+		button.setAttribute('id', 'newThreadBtn');
+		button.addEventListener('click', () => renderNewThread(this));
 
 		div.append(a, button);
 
