@@ -20,6 +20,7 @@ if (!userStore) {
 	}
 }
 
+// Updating DOM every 10 seconds
 window.setInterval(() => renderLogic(userStore), 10000);
 
 function renderLogic(user) {
